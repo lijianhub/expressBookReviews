@@ -12,21 +12,33 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  return res.send(books);
+  return res.send(JSON.stringify(books, "", 4));
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   let isbn = req.params.isbn;
-  let book = Object.values(books).find(book =>
+  let book = Object.values(books)
+      .filter(book =>
     book.isbn === isbn);
-  return res.send(book);
+  if (book) {
+    return res.send(JSON.stringify(book, null, 4)); // Pretty-printed JSON
+  } else {
+    return res.status(404).send("Book not found");
+  }
 });
 
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  let author = req.params.author;
+  let book = Object.values(books)
+      .filter(book =>
+          book.author === author);
+  if (book) {
+    return res.send(JSON.stringify(book, null, 4)); // Pretty-printed JSON
+  } else {
+    return res.status(404).send("Book not found");
+  }
 });
 
 // Get all books based on title
