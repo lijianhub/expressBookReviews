@@ -36,12 +36,67 @@ regd_users.post("/login", (req,res) => {
   }
 });
 
-
-// Add a book review
+// Add or modify a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const username = req.session.authorization?.username;
+  const isbn = req.params.isbn;
+  const review = req.body.review;
+
+  if (!isbn) {
+    return res.status(400).json({ message: "ISBN cannot be null" });
+  }
+
+  if (!review) {
+    return res.status(400).json({ message: "Review content is required" });
+  }
+
+  // Find the book by ISBN
+  const book = Object.values(books).find(book => book.isbn === isbn);
+
+  if (!book) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  const reviews = book.reviews;
+
+  if (reviews[username]) {
+    if (reviews[username] !== review) {
+      reviews[username] = review;
+      return res.send(`Book ISBN: ${isbn} review has been modified.`);
+    } else {
+      return res.send(`Book ISBN: ${isbn} review is unchanged.`);
+    }
+  } else {
+    reviews[username] = review;
+    return res.send(`Book ISBN: ${isbn} review has been added.`);
+  }
 });
+
+//Delete a review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const username = req.session.authorization?.username;
+  const isbn = req.params.isbn;
+
+  if (!isbn) {
+    return res.status(400).json({ message: "ISBN cannot be null" });
+  }
+
+  // Find the book by matching ISBN
+  const book = Object.values(books).find(book => book.isbn === isbn);
+
+  if (!book) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  // Check if the user has a review
+  if (book.reviews.hasOwnProperty(username)) {
+    delete book.reviews[username];
+    return res.status(200).json({ message: "Review deleted successfully" });
+  } else {
+    return res.status(404).json({ message: "Review by user not found" });
+  }
+});
+
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
