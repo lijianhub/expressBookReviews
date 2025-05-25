@@ -45,20 +45,16 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   if (!isbn) {
     return res.status(400).json({ message: "ISBN cannot be null" });
   }
-
   if (!review) {
     return res.status(400).json({ message: "Review content is required" });
   }
-
   // Find the book by ISBN
   const book = Object.values(books).find(book => book.isbn === isbn);
-
   if (!book) {
     return res.status(404).json({ message: "Book not found" });
   }
 
   const reviews = book.reviews;
-
   if (reviews[username]) {
     if (reviews[username] !== review) {
       reviews[username] = review;
