@@ -45,7 +45,7 @@ async function getBooksUsingAsyncAwait() {
   }
 }
 
-getBooksUsingPromise();
+//getBooksUsingPromise();
 
 getBooksUsingAsyncAwait()
     .then(data => {})
@@ -86,11 +86,9 @@ async function getBookByISBNUsingAsyncAwait(isbn) {
   }
 }
 
-const isbn = '9780142437223';
-
-getBookByISBNUsingPromise(isbn);
-getBookByISBNUsingAsyncAwait(isbn);
-
+//const isbn = '9780142437223';
+//getBookByISBNUsingPromise(isbn);
+//getBookByISBNUsingAsyncAwait(isbn);
 
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
@@ -104,6 +102,29 @@ public_users.get('/author/:author',function (req, res) {
     return res.status(404).send("Book is not found");
   }
 });
+
+function getBookByAuthorUsingPromise(author) {
+  axios.get(`http://localhost:5000/author/${author}`)
+      .then(response => {
+        console.log('Book details using promise: ', response.data);
+      })
+      .catch(error => {
+        //console.error('Error fetching book details using Promise: ', error);
+      })
+}
+
+
+async  function getBookByAuthorUsingAsyncAwait(author) {
+  try {
+    const response = await axios.get(`http://localhost:5000/author/${author}`);
+    console.log('Book details using async-await: ', response.data);
+  } catch (error) {
+    console.error('Error fetching book detail using async-await: ', error)
+  }
+}
+
+getBookByAuthorUsingPromise('Dante Alighieri');
+getBookByAuthorUsingAsyncAwait('Dante Alighieri');
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
