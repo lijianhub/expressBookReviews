@@ -4,6 +4,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 const axios = require('axios');
+const {response} = require("express");
 
 public_users.post("/register", (req,res) => {
   const username = req.body.username;
@@ -123,8 +124,8 @@ async  function getBookByAuthorUsingAsyncAwait(author) {
   }
 }
 
-getBookByAuthorUsingPromise('Dante Alighieri');
-getBookByAuthorUsingAsyncAwait('Dante Alighieri');
+//getBookByAuthorUsingPromise('Dante Alighieri');
+//getBookByAuthorUsingAsyncAwait('Dante Alighieri');
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
@@ -141,6 +142,28 @@ public_users.get('/title/:title',function (req, res) {
     return res.status(400).json({message: "isbn can not be null"});
   }
 });
+
+function getBooksByTitleUsingPromise(title) {
+  axios.get(`http://localhost:5000/title/${title}`)
+      .then(response => {
+        console.log('Get book detail by title with Promise: ', response.data);
+      })
+      .catch(error => {
+        console.log('Get book detail by title with Promise: ', error);
+      })
+}
+
+async function getBooksByTitleUsingAsyncAwait(title) {
+  try {
+    const response = await axios.get(`http://localhost:5000/title/${title}`)
+    console.log('Book details by title using async-await: ', response.data);
+  } catch (error) {
+    console.error('Error fetching book detail using async-await: ', error)
+  }
+}
+
+getBooksByTitleUsingPromise("The Divine Comedy");
+getBooksByTitleUsingAsyncAwait("The Divine Comedy");
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
