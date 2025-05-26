@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require('axios');
 
 public_users.post("/register", (req,res) => {
   const username = req.body.username;
@@ -21,6 +22,34 @@ public_users.post("/register", (req,res) => {
 public_users.get('/',function (req, res) {
   return res.send(JSON.stringify(books, "", 4));
 });
+
+// Using Promise callbacks
+function getBooksUsingPromise() {
+  axios.get('http://localhost:5000')
+      .then(response => {
+        console.log('Books using Promise:', response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching books using Promise:', error);
+      });
+}
+
+// Using async-await
+async function getBooksUsingAsyncAwait() {
+  try {
+    const response = await axios.get('http://localhost:5000');
+    return response.data; // Return the data
+  } catch (error) {
+    console.error('Error fetching books using async-await:', error);
+    throw error; // Re-throw if you want to handle it outside
+  }
+}
+
+getBooksUsingPromise();
+
+getBooksUsingAsyncAwait()
+    .then(data => console.log('Books use async:', data))
+    .catch(err => console.error('Caught error:', err));
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
