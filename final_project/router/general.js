@@ -27,7 +27,7 @@ public_users.get('/',function (req, res) {
 function getBooksUsingPromise() {
   axios.get('http://localhost:5000')
       .then(response => {
-        console.log('Books using Promise:', response.data);
+        //console.log('Books using Promise:', response.data);
       })
       .catch(error => {
         console.error('Error fetching books using Promise:', error);
@@ -48,7 +48,7 @@ async function getBooksUsingAsyncAwait() {
 getBooksUsingPromise();
 
 getBooksUsingAsyncAwait()
-    .then(data => console.log('Books use async:', data))
+    .then(data => {})
     .catch(err => console.error('Caught error:', err));
 
 // Get book details based on ISBN
@@ -63,6 +63,34 @@ public_users.get('/isbn/:isbn',function (req, res) {
     return res.status(404).send("Book is not found");
   }
 });
+
+
+// Using Promise callbacks
+function getBookByISBNUsingPromise(isbn) {
+  axios.get(`http://localhost:5000/isbn/${isbn}`)
+      .then(response => {
+        console.log('Book details using Promise:', response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching book details using Promise:', error);
+      });
+}
+
+// Using async-await
+async function getBookByISBNUsingAsyncAwait(isbn) {
+  try {
+    const response = await axios.get(`http://localhost:5000/isbn/${isbn}`);
+    console.log('Book details using async-await:', response.data);
+  } catch (error) {
+    console.error('Error fetching book details using async-await:', error);
+  }
+}
+
+const isbn = '9780142437223';
+
+getBookByISBNUsingPromise(isbn);
+getBookByISBNUsingAsyncAwait(isbn);
+
 
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
